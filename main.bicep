@@ -6,9 +6,11 @@ param ehNamespacePrefix string
 param ehName string
 param rgSharedName string
 
+var apimName = toLower('apim-${uniqueString(rg.id)}')
 var ehNamespace = '${ehNamespacePrefix}-${uniqueString(rg.id)}'
 var domain = contains(location, 'gov') ? 'servicebus.usgovcloudapi.net' : 'servicebus.windows.net'
 var ehServiceUrl = '${ehNamespace}.${domain}/${ehName}/messages'
+
 
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   name: rgName
@@ -63,7 +65,7 @@ module apim 'modules/apim.bicep' = {
   scope: rg
   name: 'apim'
   params: {
-    apimName: toLower('apim-${uniqueString(rg.id)}')
+    apimName: apimName
     location: location
     publicipId: publicip.outputs.publicipId
     publisherEmail: 'user@contoso.com'
@@ -98,3 +100,4 @@ module eventhub 'modules/eventhub.bicep' = {
 
 output ehNamespace string = ehNamespace
 output ehServiceUrl string = ehServiceUrl
+output apimName string = apimName

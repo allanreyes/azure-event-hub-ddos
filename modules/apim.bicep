@@ -44,64 +44,7 @@ resource apim 'Microsoft.ApiManagement/service@2021-08-01' = {
   }
 }
 
-resource service_apimCary_name_echo_api 'Microsoft.ApiManagement/service/apis@2022-08-01' = {
-  parent: apim
-  name: 'echo-api'
-  properties: {
-    displayName: 'Echo API'
-    apiRevision: '1'
-    subscriptionRequired: true
-    serviceUrl: 'http://echoapi.cloudapp.net/api'
-    path: 'echo'
-    protocols: [
-      'https'
-    ]
-    subscriptionKeyParameterNames: {
-      header: 'Ocp-Apim-Subscription-Key'
-      query: 'subscription-key'
-    }
-    isCurrent: true
-  }
-}
-
-resource echo_api_retrieve 'Microsoft.ApiManagement/service/apis/operations@2022-08-01' = {
-  parent: service_apimCary_name_echo_api
-  name: 'retrieve-resource'
-  properties: {
-    displayName: 'Retrieve resource'
-    method: 'GET'
-    urlTemplate: '/resource'
-    templateParameters: []
-    description: 'A demonstration of a GET call on a sample resource. It is handled by an "echo" backend which returns a response equal to the request (the supplied headers and body are being returned as received).'
-    request: {
-      queryParameters: [
-        {
-          name: 'param1'
-          description: 'A sample parameter that is required and has a default value of "sample".'
-          type: 'string'
-          defaultValue: 'sample'
-          required: true
-          values: [
-            'sample'
-          ]
-        }
-        {
-          name: 'param2'
-          description: 'Another sample parameter, set to not required.'
-          type: 'number'
-        }
-      ]
-    }
-    responses: [
-      {
-        statusCode: 200
-        description: 'Returned in all cases.'
-      }
-    ]
-  }
-}
-
-resource service_apimCary_name_event_hub 'Microsoft.ApiManagement/service/apis@2022-08-01' = {
+resource api_event_hub 'Microsoft.ApiManagement/service/apis@2022-08-01' = {
   parent: apim
   name: 'event-hub'
   properties: {
@@ -117,8 +60,8 @@ resource service_apimCary_name_event_hub 'Microsoft.ApiManagement/service/apis@2
   }
 }
 
-resource service_apimCary_name_event_hub_add_message 'Microsoft.ApiManagement/service/apis/operations@2022-08-01' = {
-  parent: service_apimCary_name_event_hub
+resource operation_event_hub_add_message 'Microsoft.ApiManagement/service/apis/operations@2022-08-01' = {
+  parent: api_event_hub
   name: 'add-message'
   properties: {
     displayName: 'Add Message'
@@ -134,3 +77,5 @@ resource service_apimCary_name_event_hub_add_message 'Microsoft.ApiManagement/se
     responses: []
   }
 }
+
+output apimServiceUrl string = api_event_hub.properties.serviceUrl
